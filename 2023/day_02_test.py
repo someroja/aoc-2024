@@ -1,5 +1,6 @@
-import day_02
 import textwrap
+
+import day_02
 
 
 def test_parse_id():
@@ -9,25 +10,25 @@ def test_parse_id():
 
 
 def test_parse_cube_counts():
-    input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue"
+    puzzle_input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue"
     expected = {"red": [4, 1], "green": [2], "blue": [3, 6]}
-    assert day_02.parse_cube_counts(input) == expected
+    assert day_02.parse_cube_counts(puzzle_input) == expected
 
 
 def test_possible_game():
     game = day_02.to_game("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green")
-    assert day_02.is_possible(game, max_red=12, max_green=13, max_blue=14) == True
+    assert day_02.is_possible(game, max_red=12, max_green=13, max_blue=14)
 
 
 def test_impossible_game():
     game = day_02.to_game(
         "Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red"
     )
-    assert day_02.is_possible(game, max_red=12, max_green=13, max_blue=14) == False
+    assert not day_02.is_possible(game, max_red=12, max_green=13, max_blue=14)
 
 
 def test_solve_a():
-    input = textwrap.dedent(
+    puzzle_input = textwrap.dedent(
         """\
         Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
         Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
@@ -36,7 +37,7 @@ def test_solve_a():
         Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
         """
     )
-    assert day_02.solve_a(input) == 8
+    assert day_02.solve_a(puzzle_input) == 8
 
 
 def test_calculate_power():
@@ -55,7 +56,7 @@ def test_calculate_power():
 
 
 def test_solve_b():
-    input = textwrap.dedent(
+    puzzle_input = textwrap.dedent(
         """\
         Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
         Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
@@ -64,4 +65,4 @@ def test_solve_b():
         Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
         """
     )
-    assert day_02.solve_b(input) == 2286
+    assert day_02.solve_b(puzzle_input) == 2286

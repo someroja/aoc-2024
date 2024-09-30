@@ -1,9 +1,18 @@
+import textwrap
+
 import day_01
 
 
 def test_solve_a():
-    input = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet"
-    assert day_01.solve_a(input) == 142
+    puzzle_input = textwrap.dedent(
+        """\
+        1abc2
+        pqr3stu8vwx
+        a1b2c3d4e5f
+        treb7uchet
+        """
+    )
+    assert day_01.solve_a(puzzle_input) == 142
 
 
 def test_b_regex():
@@ -18,5 +27,15 @@ def test_b_regex():
 
 
 def test_solve_b():
-    input = "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4nineeightseven2\nzoneight234\n7pqrstsixteen"
-    assert day_01.solve_b(input) == 281
+    puzzle_input = textwrap.dedent(
+        """\
+        two1nine
+        eightwothree
+        abcone2threexyz
+        xtwone3four
+        4nineeightseven2
+        zoneight234
+        7pqrstsixteen
+        """
+    )
+    assert day_01.solve_b(puzzle_input) == 281

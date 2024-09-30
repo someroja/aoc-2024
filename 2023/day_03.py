@@ -2,19 +2,19 @@
 Advent of Code 2023, day 3
 """
 
-import aocd
-
 from re import Match, finditer
+
+import aocd
 
 
 def solve():
-    input = aocd.get_data(day=3, year=2023)
-    print("Part 1:", solve_a(input))
-    print("Part 2:", solve_b(input))
+    puzzle_input = aocd.get_data(day=3, year=2023)
+    print("Part 1:", solve_a(puzzle_input))
+    print("Part 2:", solve_b(puzzle_input))
 
 
-def solve_a(input: str) -> int:
-    lines = input.splitlines()
+def solve_a(puzzle_input: str) -> int:
+    lines = puzzle_input.splitlines()
     matches_per_line = [find_digits(line) for line in lines]
     part_numbers = [
         int(match.group())
@@ -25,7 +25,7 @@ def solve_a(input: str) -> int:
     return sum(part_numbers)
 
 
-def solve_b(input: str) -> int:
+def solve_b(puzzle_input: str) -> int:
     pass
 
 

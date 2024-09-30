@@ -2,18 +2,19 @@
 Advent of Code 2023, day 1
 """
 
-import aocd
 import re
+
+import aocd
 
 
 def solve():
-    input = aocd.get_data(day=1, year=2023)
-    print("Part 1:", solve_a(input))
-    print("Part 2:", solve_b(input))
+    puzzle_input = aocd.get_data(day=1, year=2023)
+    print("Part 1:", solve_a(puzzle_input))
+    print("Part 2:", solve_b(puzzle_input))
 
 
-def solve_a(input: str) -> int:
-    lines = input.splitlines()
+def solve_a(puzzle_input: str) -> int:
+    lines = puzzle_input.splitlines()
     calibration_sum = sum([calibration_value(line) for line in lines])
     return calibration_sum
 
@@ -25,8 +26,8 @@ def calibration_value(line: str) -> int:
     return int(first + last)
 
 
-def solve_b(input: str) -> int:
-    lines = [parse_line(line) for line in input.splitlines()]
+def solve_b(puzzle_input: str) -> int:
+    lines = [parse_line(line) for line in puzzle_input.splitlines()]
     calibration_sum = sum([int(f"{line[0]}{line[-1]}") for line in lines])
     return calibration_sum
 

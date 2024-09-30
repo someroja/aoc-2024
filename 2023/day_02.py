@@ -2,21 +2,21 @@
 Advent of Code 2023, day 2
 """
 
-import aocd
-
-from re import match, findall
 from collections import defaultdict
 from dataclasses import dataclass
+from re import findall, match
+
+import aocd
 
 
 def solve():
-    input = aocd.get_data(day=2, year=2023)
-    print("Part 1:", solve_a(input))
-    print("Part 2:", solve_b(input))
+    puzzle_input = aocd.get_data(day=2, year=2023)
+    print("Part 1:", solve_a(puzzle_input))
+    print("Part 2:", solve_b(puzzle_input))
 
 
-def solve_a(input: str) -> int:
-    games = [to_game(line) for line in input.splitlines()]
+def solve_a(puzzle_input: str) -> int:
+    games = [to_game(line) for line in puzzle_input.splitlines()]
     possible_games = [
         game
         for game in games
@@ -25,8 +25,8 @@ def solve_a(input: str) -> int:
     return sum([game.id for game in possible_games])
 
 
-def solve_b(input: str) -> int:
-    games = [to_game(line) for line in input.splitlines()]
+def solve_b(puzzle_input: str) -> int:
+    games = [to_game(line) for line in puzzle_input.splitlines()]
     powers = [calculate_power(game) for game in games]
     return sum(powers)
 
@@ -38,9 +38,9 @@ class Game:
 
 
 def to_game(line: str) -> Game:
-    id = parse_id(line)
+    game_id = parse_id(line)
     cube_counts = parse_cube_counts(line)
-    return Game(id, cube_counts)
+    return Game(game_id, cube_counts)
 
 
 def parse_id(line: str) -> int:

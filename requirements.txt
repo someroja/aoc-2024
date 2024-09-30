@@ -1,15 +1,11 @@
 advent-of-code-data==2.0.1
 aocd-example-parser==2023.12.17
 beautifulsoup4==4.12.3
-black==24.8.0
-click==8.1.7
 iniconfig==2.0.0
-mypy-extensions==1.0.0
 packaging==24.1
-pathspec==0.12.1
 Pebble==5.0.7
-platformdirs==4.2.2
 pluggy==1.5.0
 pytest==8.3.3
+ruff==0.6.8
 soupsieve==2.6
-urllib3==2.2.2
+urllib3==2.2.3
