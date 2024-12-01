@@ -1,11 +1,11 @@
-advent-of-code-data==2.0.1
-aocd-example-parser==2023.12.17
+advent-of-code-data==2.0.4
+aocd-example-parser==2023.12.20
 beautifulsoup4==4.12.3
 iniconfig==2.0.0
-packaging==24.1
-Pebble==5.0.7
+packaging==24.2
+Pebble==5.1.0
 pluggy==1.5.0
 pytest==8.3.3
-ruff==0.6.8
+ruff==0.8.1
 soupsieve==2.6
 urllib3==2.2.3
