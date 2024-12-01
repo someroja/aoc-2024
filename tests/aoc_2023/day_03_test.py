@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-import day_03
+from aoc_2023 import day_03
 
 
 def test_find_digits():

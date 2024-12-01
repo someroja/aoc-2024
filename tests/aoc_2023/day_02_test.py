@@ -1,6 +1,6 @@
 import textwrap
 
-import day_02
+from aoc_2023 import day_02
 
 
 def test_parse_id():
