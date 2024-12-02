@@ -8,29 +8,41 @@ import aocd
 
 
 def solve_a(puzzle_input: str) -> int:
-    safe_count = 0
-
-    for line in puzzle_input.splitlines():
-        numbers = [int(match) for match in re.findall(r"\d+", line)]
-        is_ascending = numbers[0] < numbers[-1]
-        is_safe = all(
-            [is_safe_delta(a, b, is_ascending) for a, b in zip(numbers, numbers[1:])]
-        )
-        if is_safe:
-            safe_count += 1
-
-    return safe_count
+    safe_lines = [line for line in puzzle_input.splitlines() if is_safe(parse(line))]
+    return len(safe_lines)
 
 
-def is_safe_delta(a: int, b: int, is_ascending: bool) -> bool:
-    if is_ascending:
-        return a < b and b <= a + 3
-    else:
-        return a > b and a <= b + 3
+def parse(line: str) -> list[int]:
+    return [int(match) for match in re.findall(r"\d+", line)]
+
+
+def is_safe(numbers: list[int]) -> bool:
+    is_ascending = numbers[0] < numbers[-1]
+    return all(
+        [
+            (a < b if is_ascending else a > b) and is_safe_delta(a, b)
+            for a, b in zip(numbers, numbers[1:])
+        ]
+    )
+
+
+def is_safe_delta(a: int, b: int) -> bool:
+    delta = abs(a - b)
+    return delta >= 1 and delta <= 3
 
 
 def solve_b(puzzle_input: str) -> int:
-    pass
+    safe_lines = [line for line in puzzle_input.splitlines() if is_safe_dampened(line)]
+    return len(safe_lines)
+
+
+def is_safe_dampened(line: str) -> bool:
+    numbers = parse(line)
+    # Problem Dampener and brute force...
+    dampening_attempts = [
+        numbers[:skipped] + numbers[skipped + 1 :] for skipped in range(len(numbers))
+    ]
+    return is_safe(numbers) or any(is_safe(attempt) for attempt in dampening_attempts)
 
 
 if __name__ == "__main__":
