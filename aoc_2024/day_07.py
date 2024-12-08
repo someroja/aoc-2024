@@ -9,8 +9,15 @@ import aocd
 
 
 def solve_a(puzzle_input: str) -> int:
+    return solve(puzzle_input, ["+", "*"])
+
+
+def solve_b(puzzle_input: str) -> int:
+    return solve(puzzle_input, ["+", "*", "||"])
+
+
+def solve(puzzle_input: str, operators: list[str]) -> int:
     lines = puzzle_input.splitlines()
-    operators = ["+", "*"]
     correct_values = []
 
     for line in lines:
@@ -26,15 +33,13 @@ def solve_a(puzzle_input: str) -> int:
                         result += op[1]
                     case "*":
                         result *= op[1]
+                    case "||":
+                        result = int(f"{result}{op[1]}")
             if result == test_value:
                 correct_values.append(result)
                 break
 
     return sum(correct_values)
-
-
-def solve_b(puzzle_input: str) -> int:
-    pass
 
 
 if __name__ == "__main__":

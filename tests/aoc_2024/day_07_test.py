@@ -22,4 +22,4 @@ def test_solve_a():
 
 
 def test_solve_b():
-    assert day_07.solve_b(puzzle_input) == "??"
+    assert day_07.solve_b(puzzle_input) == 11387
