@@ -82,4 +82,4 @@ def test_get_neighbours(pos: grid.Position, expected: int):
 )
 def test_get_perimeter(pos: grid.Position, expected: int):
     region = grid.get_region(pos, abcde_grid)
-    assert len(grid.get_perimeter(region)) == expected
+    assert grid.get_perimeter(region) == expected
