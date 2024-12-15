@@ -5,14 +5,15 @@ from textwrap import dedent
 
 
 def scaffold(year: int, day: int):
-    solution_dir = Path(f"aoc_{year}")
-    test_dir = Path(f"tests/aoc_{year}")
+    project_root = Path(__file__).parent.resolve()
+    solution_dir = project_root / f"aoc_{year}"
+    test_dir = project_root / f"tests/aoc_{year}"
 
     check_dir(solution_dir)
     check_dir(test_dir)
 
     solution_file = solution_dir / f"day_{day:02d}.py"
-    test_file = test_dir / Path(f"day_{day:02d}_test.py")
+    test_file = test_dir / f"day_{day:02d}_test.py"
 
     solution_template = dedent(
         f'''\
@@ -69,13 +70,14 @@ def check_dir(path: Path):
         path.mkdir()
         init = path / "__init__.py"
         init.touch()
+        print(f"Created {path}")
     elif not path.is_dir():
-        raise FileExistsError(f"Path {path} exists, but it is not a directory")
+        print(f"Skipping {path}: Path exists, but it is not a directory")
 
 
 def write_file(file: Path, template: str):
     if file.exists():
-        raise FileExistsError(f"File {file} exists")
+        print(f"Skipping {file}: File exists")
     else:
         file.write_text(template)
         print(f"Created {file}")
