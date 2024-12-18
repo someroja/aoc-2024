@@ -43,20 +43,26 @@ def scaffold(year: int, day: int):
         f'''\
         from textwrap import dedent
 
+        import pytest
+
         from aoc_{year} import day_{day}
 
-        puzzle_input = dedent(
-            """\\
+        @pytest.fixture
+        def puzzle_input() -> str:
+            return dedent(
+                """\\
 
-            """
-        )
+                """
+            )
 
 
-        def test_solve_a():
+        @pytest.mark.skip
+        def test_solve_a(puzzle_input: str):
             assert day_{day}.solve_a(puzzle_input) == "??"
 
 
-        def test_solve_b():
+        @pytest.mark.skip
+        def test_solve_b(puzzle_input: str):
             assert day_{day}.solve_b(puzzle_input) == "??"
         '''
     )
