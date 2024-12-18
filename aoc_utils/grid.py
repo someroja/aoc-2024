@@ -1,21 +1,51 @@
 from collections import deque
-from typing import Callable, Final, Generic, List, NamedTuple, Tuple, TypeVar
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
+from typing import Final
 
-T = TypeVar("T")
+type Grid[T] = Sequence[Sequence[T]]
+
+type MapTileValue[T] = Callable[[str], T]
 
 
-Grid = List[List[T]]
+def map_to_str(value: str) -> str:
+    return value
 
 
-class Position(NamedTuple, Generic[T]):
+def map_to_int(value: str) -> int:
+    return int(value)
+
+
+@dataclass(frozen=True)
+class Tile[T]:
     i: int
     j: int
     value: T
 
 
-MatchPredicate = Callable[[Position[T], Position[T]], bool]
+@dataclass(frozen=True)
+class Region[T]:
+    tiles: Sequence[Tile[T]]
 
-Direction = Tuple[int, int]
+
+@dataclass(frozen=True)
+class Position:
+    i: int
+    j: int
+
+
+type MatchPredicate[T] = Callable[[Tile[T], Tile[T]], bool]
+
+
+def match_always[T](_a: Tile[T], _b: Tile[T]) -> bool:
+    return True
+
+
+def match_value[T](a: Tile[T], b: Tile[T]) -> bool:
+    return a.value == b.value
+
+
+type Direction = tuple[int, int]
 
 UP: Final[Direction] = (-1, 0)
 DOWN: Final[Direction] = (1, 0)
@@ -23,25 +53,22 @@ LEFT: Final[Direction] = (0, -1)
 RIGHT: Final[Direction] = (0, 1)
 
 
-def create_grid(puzzle_input: str) -> Grid[str]:
-    return [list(line) for line in puzzle_input.splitlines()]
+def create_grid[T](
+    puzzle_input: str, map_tile_value: MapTileValue[T] = map_to_str
+) -> Grid[T]:
+    return [
+        [map_tile_value(tile) for tile in list(row)]
+        for row in puzzle_input.splitlines()
+    ]
 
 
-def match_always(_a: Position[T], _b: Position[T]) -> bool:
-    return True
-
-
-def match_value(a: Position, b: Position) -> bool:
-    return a.value == b.value
-
-
-def get_neighbours(
-    pos: Position[T], grid: Grid[T], predicate: MatchPredicate[T] = match_always
-) -> List[Position[T]]:
+def get_neighbours[T](
+    tile: Tile[T], grid: Grid[T], predicate: MatchPredicate[T] = match_always
+) -> Sequence[Tile[T]]:
     neighbours = []
     row_count, col_count = len(grid), len(grid[0])
     for di, dj in [UP, RIGHT, DOWN, LEFT]:
-        neighbour_i, neighbour_j = pos.i + di, pos.j + dj
+        neighbour_i, neighbour_j = tile.i + di, tile.j + dj
         is_outside_bounds = (
             neighbour_i < 0
             or neighbour_i >= row_count
@@ -50,52 +77,51 @@ def get_neighbours(
         )
         if is_outside_bounds:
             continue
-        neighbour = Position(neighbour_i, neighbour_j, grid[neighbour_i][neighbour_j])
-        if predicate(pos, neighbour):
+        neighbour = Tile(neighbour_i, neighbour_j, grid[neighbour_i][neighbour_j])
+        if predicate(tile, neighbour):
             neighbours.append(neighbour)
     return neighbours
 
 
-def get_region(
-    pos: Position[T], grid: Grid[T], predicate: MatchPredicate[T] = match_value
-) -> List[Position[T]]:
-    region = set()
-    stack = deque([pos])
+def get_region[T](
+    tile: Tile[T], grid: Grid[T], predicate: MatchPredicate[T] = match_value
+) -> Region[T]:
+    tiles = set()
+    stack = deque([tile])
     while stack:
         current = stack.pop()
-        if current not in region:
-            region.add(current)
+        if current not in tiles:
+            tiles.add(current)
             stack.extend(
                 neighbour
                 for neighbour in get_neighbours(current, grid, predicate)
-                if neighbour not in region
+                if neighbour not in tiles
             )
-    return list(region)
+    return Region(list(tiles))
 
 
-def get_all_regions(
+def get_all_regions[T](
     grid: Grid[T], predicate: MatchPredicate[T] = match_value
-) -> List[List[Position[T]]]:
+) -> Sequence[Region[T]]:
     regions = []
-    visited = set()
+    visited_tiles = set()
     for i in range(len(grid)):
         for j in range(len(grid[0])):
-            pos = Position(i, j, grid[i][j])
-            if pos in visited:
+            tile = Tile(i, j, grid[i][j])
+            if tile in visited_tiles:
                 continue
-            region = get_region(pos, grid, predicate)
+            region = get_region(tile, grid, predicate)
             regions.append(region)
-            visited.update(region)
+            visited_tiles.update(region.tiles)
     return regions
 
 
-def get_perimeter(region: List[Position[T]]) -> int:
-    coordinates = {(pos.i, pos.j) for pos in region}
+def get_perimeter[T](region: Region[T]) -> int:
+    coordinates = {(tile.i, tile.j) for tile in region.tiles}
     perimeter = 0
-    for pos in region:
+    for tile in region.tiles:
         for di, dj in [UP, RIGHT, DOWN, LEFT]:
-            is_edge = (pos.i + di, pos.j + dj) not in coordinates
+            is_edge = (tile.i + di, tile.j + dj) not in coordinates
             if is_edge:
                 perimeter += 1
     return perimeter
-
