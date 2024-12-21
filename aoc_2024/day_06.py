@@ -2,80 +2,79 @@
 Advent of Code 2024, day 6
 """
 
+import copy
 from itertools import cycle
+from typing import NamedTuple
 
 import aocd
 
+from aoc_utils import grid
+
+type LabMap = grid.Grid[str]
+
+
+class Step(NamedTuple):
+    i: int
+    j: int
+    direction: grid.Direction
+
 
 def solve_a(puzzle_input: str) -> int:
-    path = get_path(puzzle_input)
-    # we want to know how distinct positions there are
-    return len(set(path))
-
-
-def get_path(puzzle_input: str) -> list[tuple[int, int, str]]:
-    # use the padding trick again
-    lab_map = [["!", *row, "!"] for row in puzzle_input.splitlines()]
-    pad_row = list("!" * len(lab_map[0]))
-    lab_map.insert(0, pad_row)
-    lab_map.append(pad_row)
-
-    start = find_guard(lab_map)
-    path = walk(start, lab_map)
-
-    return path
-
-
-def find_guard(lab_map: list[list[str]]) -> tuple[int, int]:
-    # maybe there can be multiple guards in the lab?
-    guards = [
-        (i, j)
-        for i, row in enumerate(lab_map)
-        for j, value in enumerate(row)
-        if value == "^"  # assuming guards start facing north
-    ]
-    return guards[0]
-
-
-def walk(
-    start: tuple[int, int], lab_map: list[list[str]]
-) -> list[tuple[int, int, str]]:
-    directions = cycle(["^", ">", "v", "<"])
-    direction = next(directions)
-    i = start[0]
-    j = start[1]
-    path = [(i, j, direction)]
-    ahead = "?"
-
-    while ahead != "!":
-        next_i, next_j = next_step(i, j, direction)
-        ahead = lab_map[next_i][next_j]
-        if ahead == "." or ahead == "^":
-            i = next_i
-            j = next_j
-            path.append((i, j, direction))
-        elif ahead == "#":
-            direction = next(directions)
-
-    return path
-
-
-def next_step(i: int, j: int, direction: str) -> tuple[int, int]:
-    match direction:
-        case "^":
-            return i - 1, j
-        case "v":
-            return i + 1, j
-        case "<":
-            return i, j - 1
-        case ">":
-            return i, j + 1
-        case _:
-            return i, j
+    lab_map = grid.create_grid(puzzle_input)
+    steps = get_guard_steps(lab_map)[0]
+    # we want to know how many distinct positions there are
+    return len({(step.i, step.j) for step in steps})
 
 
 def solve_b(puzzle_input: str) -> int:
-    pass
+    lab_map = grid.create_grid(puzzle_input)
+    steps = get_guard_steps(lab_map)[0]
+    obstruction_options = []
+
+    # brute-force by trying all possible steps for obstacles
+    # (skip the guard's starting position as they would notice!)
+    for step in steps:
+        if lab_map[step.i][step.j] == "^":
+            continue
+        altered_lab = copy.deepcopy(lab_map)
+        altered_lab[step.i][step.j] = "#"
+        status = get_guard_steps(altered_lab)[1]
+        if status == "loop":
+            obstruction_options.append(step)
+
+    # again, we want to know how many distinct positions there are
+    return len({(step.i, step.j) for step in obstruction_options})
+
+
+def get_guard_steps(lab_map: LabMap) -> tuple[list[Step], str]:
+    row_count, col_count = len(lab_map), len(lab_map[0])
+
+    directions = cycle([grid.UP, grid.RIGHT, grid.DOWN, grid.LEFT])
+    direction = next(directions)
+
+    start_i, start_j, _ = grid.get_tiles(lab_map, lambda tile: tile.value == "^")[0]
+    start = Step(start_i, start_j, direction)
+    current = (start.i, start.j)
+    steps = [start]
+    status = "ok"
+
+    while True:
+        i, j = current[0] + direction[0], current[1] + direction[1]
+        step = Step(i, j, direction)
+        is_on_map = 0 <= i < row_count and 0 <= j < col_count
+        if step in steps:
+            status = "loop"
+            break
+        elif not is_on_map:
+            break
+        elif lab_map[i][j] == "#":
+            # obstacle! just get next direction and try again
+            direction = next(directions)
+        else:
+            steps.append(step)
+            current = (i, j)
+
+    return steps, status
 
 
 if __name__ == "__main__":

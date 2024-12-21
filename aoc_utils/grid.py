@@ -1,37 +1,27 @@
 from collections import deque
-from collections.abc import Callable, Sequence
-from dataclasses import dataclass
-from typing import Final
+from collections.abc import Callable
+from typing import Final, NamedTuple
 
-type Grid[T] = Sequence[Sequence[T]]
+type Grid[T] = list[list[T]]
 
-type MapTileValue[T] = Callable[[str], T]
-
-
-def map_to_str(value: str) -> str:
-    return value
+type Transform[T] = Callable[[str], T]
 
 
-def map_to_int(value: str) -> int:
+def to_int(value: str) -> int:
     return int(value)
 
 
-@dataclass(frozen=True)
-class Tile[T]:
+class Tile[T](NamedTuple):
     i: int
     j: int
     value: T
 
 
-@dataclass(frozen=True)
-class Region[T]:
-    tiles: Sequence[Tile[T]]
+class Region[T](NamedTuple):
+    tiles: list[Tile[T]]
 
 
-@dataclass(frozen=True)
-class Position:
-    i: int
-    j: int
+type Position = tuple[int, int]
 
 
 type MatchPredicate[T] = Callable[[Tile[T], Tile[T]], bool]
@@ -54,19 +44,22 @@ RIGHT: Final[Direction] = (0, 1)
 
 
 def create_grid[T](
-    puzzle_input: str, map_tile_value: MapTileValue[T] = map_to_str
+    puzzle_input: str, transform: Transform[T] = lambda tile: tile
 ) -> Grid[T]:
     return [
-        [map_tile_value(tile) for tile in list(row)]
-        for row in puzzle_input.splitlines()
+        [transform(tile) for tile in list(row)] for row in puzzle_input.splitlines()
     ]
+
+
+def shape(grid: Grid) -> tuple[int, int]:
+    return len(grid), len(grid[0])
 
 
 def get_neighbours[T](
     tile: Tile[T], grid: Grid[T], predicate: MatchPredicate[T] = match_always
-) -> Sequence[Tile[T]]:
+) -> list[Tile[T]]:
     neighbours = []
-    row_count, col_count = len(grid), len(grid[0])
+    row_count, col_count = shape(grid)
     for di, dj in [UP, RIGHT, DOWN, LEFT]:
         neighbour_i, neighbour_j = tile.i + di, tile.j + dj
         is_outside_bounds = (
@@ -102,7 +95,7 @@ def get_region[T](
 
 def get_all_regions[T](
     grid: Grid[T], predicate: MatchPredicate[T] = match_value
-) -> Sequence[Region[T]]:
+) -> list[Region[T]]:
     regions = []
     visited_tiles = set()
     for i in range(len(grid)):
@@ -116,7 +109,7 @@ def get_all_regions[T](
     return regions
 
 
-def get_perimeter[T](region: Region[T]) -> int:
+def get_perimeter(region: Region) -> int:
     coordinates = {(tile.i, tile.j) for tile in region.tiles}
     perimeter = 0
     for tile in region.tiles:
@@ -125,3 +118,41 @@ def get_perimeter[T](region: Region[T]) -> int:
             if is_edge:
                 perimeter += 1
     return perimeter
+
+
+def get_tiles[T](
+    grid: Grid[T], predicate: Callable[[Tile[T]], bool] = lambda tile: True
+) -> list[Tile[T]]:
+    tiles = []
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            tile = Tile(i, j, grid[i][j])
+            if predicate(tile):
+                tiles.append(tile)
+    return tiles
+
+
+def turn_right(direction: Direction) -> Direction:
+    i, j = direction
+    return (j, -i)
+
+
+def turn_left(direction: Direction) -> Direction:
+    i, j = direction
+    return (-j, i)
+
+
+def can_see(
+    viewpoint: Position,
+    target: Position,
+    direction: Direction,
+) -> bool:
+    vertical_delta = target[0] - viewpoint[0]
+    if direction[0] == 0 and vertical_delta != 0:
+        # should not move vertically
+        return False
+    horizontal_delta = target[1] - viewpoint[1]
+    if direction[1] == 0 and horizontal_delta != 0:
+        # should not move horizontally
+        return False
+    return vertical_delta * direction[1] == horizontal_delta * direction[0]

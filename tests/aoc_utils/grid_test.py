@@ -10,6 +10,7 @@ from aoc_utils.grid import (
     get_neighbours,
     get_perimeter,
     get_region,
+    get_tiles,
     match_value,
 )
 
@@ -43,14 +44,9 @@ def ox_grid() -> Grid[str]:
     )
 
 
-def test_get_all_regions_abcde_grid(abcde_grid: Grid[str]):
-    regions = get_all_regions(abcde_grid)
-    assert len(regions) == 5
-
-
-def test_get_all_regions_ox_grid(ox_grid: Grid[str]):
-    regions = get_all_regions(ox_grid)
-    assert len(regions) == 5
+def test_get_all_regions(abcde_grid: Grid[str], ox_grid: Grid[str]):
+    assert len(get_all_regions(abcde_grid)) == 5
+    assert len(get_all_regions(ox_grid)) == 5
 
 
 @pytest.mark.parametrize(
@@ -96,3 +92,14 @@ def test_get_neighbours(abcde_grid: Grid[str], tile: Tile[str], expected_count: 
 def test_get_perimeter(abcde_grid: Grid[str], tile: Tile[str], expected: int):
     region = get_region(tile, abcde_grid)
     assert get_perimeter(region) == expected
+
+
+def test_get_tiles(abcde_grid: Grid[str], ox_grid: Grid[str]):
+    assert len(get_tiles(abcde_grid)) == 16
+    assert len(get_tiles(abcde_grid, lambda tile: tile.value == "A")) == 4
+    assert len(get_tiles(abcde_grid, lambda tile: tile.value == "B")) == 4
+    assert len(get_tiles(abcde_grid, lambda tile: tile.value == "C")) == 4
+    assert len(get_tiles(abcde_grid, lambda tile: tile.value == "D")) == 1
+    assert len(get_tiles(abcde_grid, lambda tile: tile.value == "E")) == 3
+    assert len(get_tiles(ox_grid)) == 25
+    assert len(get_tiles(ox_grid, lambda tile: tile.value == "X")) == 4
