@@ -45,7 +45,7 @@ def scaffold(year: int, day: int):
 
         import pytest
 
-        from aoc_{year} import day_{day}
+        from aoc_{year} import day_{day:02d}
 
         @pytest.fixture
         def puzzle_input() -> str:
@@ -58,12 +58,12 @@ def scaffold(year: int, day: int):
 
         @pytest.mark.skip
         def test_solve_a(puzzle_input: str):
-            assert day_{day}.solve_a(puzzle_input) == "??"
+            assert day_{day:02d}.solve_a(puzzle_input) == "??"
 
 
         @pytest.mark.skip
         def test_solve_b(puzzle_input: str):
-            assert day_{day}.solve_b(puzzle_input) == "??"
+            assert day_{day:02d}.solve_b(puzzle_input) == "??"
         '''
     )
 
