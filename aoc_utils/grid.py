@@ -44,10 +44,10 @@ RIGHT: Final[Direction] = (0, 1)
 
 
 def create_grid[T](
-    puzzle_input: str, transform: Transform[T] = lambda tile: tile
+    puzzle_input: str, transform: Transform[T] = lambda value: value
 ) -> Grid[T]:
     return [
-        [transform(tile) for tile in list(row)] for row in puzzle_input.splitlines()
+        [transform(value) for value in list(row)] for row in puzzle_input.splitlines()
     ]
 
 
@@ -55,20 +55,19 @@ def shape(grid: Grid) -> tuple[int, int]:
     return len(grid), len(grid[0])
 
 
+def is_in_bounds(position: Position, grid: Grid) -> bool:
+    i, j = position
+    i_upper_bound, j_upper_bound = shape(grid)
+    return 0 <= i < i_upper_bound and 0 <= j < j_upper_bound
+
+
 def get_neighbours[T](
     tile: Tile[T], grid: Grid[T], predicate: MatchPredicate[T] = match_always
 ) -> list[Tile[T]]:
     neighbours = []
-    row_count, col_count = shape(grid)
     for di, dj in [UP, RIGHT, DOWN, LEFT]:
         neighbour_i, neighbour_j = tile.i + di, tile.j + dj
-        is_outside_bounds = (
-            neighbour_i < 0
-            or neighbour_i >= row_count
-            or neighbour_j < 0
-            or neighbour_j >= col_count
-        )
-        if is_outside_bounds:
+        if not is_in_bounds((neighbour_i, neighbour_j), grid):
             continue
         neighbour = Tile(neighbour_i, neighbour_j, grid[neighbour_i][neighbour_j])
         if predicate(tile, neighbour):
