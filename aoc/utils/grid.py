@@ -4,12 +4,6 @@ from typing import Final, NamedTuple
 
 type Grid[T] = list[list[T]]
 
-type Transform[T] = Callable[[str], T]
-
-
-def to_int(value: str) -> int:
-    return int(value)
-
 
 class Tile[T](NamedTuple):
     i: int
@@ -27,7 +21,7 @@ type Position = tuple[int, int]
 type MatchPredicate[T] = Callable[[Tile[T], Tile[T]], bool]
 
 
-def match_always[T](_a: Tile[T], _b: Tile[T]) -> bool:
+def match_always[T](a: Tile[T], b: Tile[T]) -> bool:
     return True
 
 
@@ -44,7 +38,7 @@ RIGHT: Final[Direction] = (0, 1)
 
 
 def create_grid[T](
-    puzzle_input: str, transform: Transform[T] = lambda value: value
+    puzzle_input: str, transform: Callable[[str], T] = lambda value: value
 ) -> Grid[T]:
     return [
         [transform(value) for value in list(row)] for row in puzzle_input.splitlines()

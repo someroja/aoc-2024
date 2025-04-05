@@ -3,8 +3,7 @@ Advent of Code 2024, day 12
 """
 
 import aocd
-
-from aoc_utils import grid
+from utils import grid
 
 
 def solve_a(puzzle_input: str) -> int:

@@ -7,8 +7,7 @@ from itertools import cycle
 from typing import NamedTuple
 
 import aocd
-
-from aoc_utils import grid
+from utils import grid
 
 type LabMap = grid.Grid[str]
 

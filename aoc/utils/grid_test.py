@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from aoc_utils.grid import (
+from aoc.utils.grid import (
     Grid,
     Tile,
     create_grid,
@@ -41,6 +41,22 @@ def ox_grid() -> Grid[str]:
             OOOOO
             """
         )
+    )
+
+
+@pytest.fixture
+def number_grid() -> Grid[int]:
+    return create_grid(
+        dedent(
+            """\
+            00000
+            01020
+            00000
+            03040
+            00000
+            """
+        ),
+        int,
     )
 
 
@@ -103,3 +119,10 @@ def test_get_tiles(abcde_grid: Grid[str], ox_grid: Grid[str]):
     assert len(get_tiles(abcde_grid, lambda tile: tile.value == "E")) == 3
     assert len(get_tiles(ox_grid)) == 25
     assert len(get_tiles(ox_grid, lambda tile: tile.value == "X")) == 4
+
+
+def test_number_grid(number_grid: Grid[int]):
+    nonzeros = [
+        tile.value for tile in get_tiles(number_grid, lambda tile: tile.value > 0)
+    ]
+    assert sorted(nonzeros) == [1, 2, 3, 4]

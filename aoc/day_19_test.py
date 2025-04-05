@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from aoc_2024 import day_19
+from aoc import day_19
 
 
 @pytest.fixture

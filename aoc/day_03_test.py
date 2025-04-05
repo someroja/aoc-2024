@@ -1,4 +1,4 @@
-from aoc_2024 import day_03
+from aoc import day_03
 
 
 def test_solve_a():

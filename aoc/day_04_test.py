@@ -1,6 +1,6 @@
 import textwrap
 
-from aoc_2024 import day_04
+from aoc import day_04
 
 
 def test_solve_a():

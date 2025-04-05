@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from aoc_2024 import day_05
+from aoc import day_05
 
 puzzle_input = dedent(
     """\

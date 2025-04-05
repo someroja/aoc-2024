@@ -6,14 +6,12 @@ from textwrap import dedent
 
 def scaffold(year: int, day: int):
     project_root = Path(__file__).parent.resolve()
-    solution_dir = project_root / f"aoc_{year}"
-    test_dir = project_root / f"tests/aoc_{year}"
+    solution_dir = project_root / "aoc"
 
     check_dir(solution_dir)
-    check_dir(test_dir)
 
     solution_file = solution_dir / f"day_{day:02d}.py"
-    test_file = test_dir / f"day_{day:02d}_test.py"
+    test_file = solution_dir / f"day_{day:02d}_test.py"
 
     solution_template = dedent(
         f'''\
@@ -45,7 +43,7 @@ def scaffold(year: int, day: int):
 
         import pytest
 
-        from aoc_{year} import day_{day:02d}
+        from aoc import day_{day:02d}
 
         @pytest.fixture
         def puzzle_input() -> str:

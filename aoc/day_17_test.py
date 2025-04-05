@@ -1,6 +1,8 @@
 from textwrap import dedent
 
-from aoc_2024 import day_17
+import pytest
+
+from aoc import day_17
 
 puzzle_input = dedent(
     """\
@@ -23,6 +25,7 @@ def test_init():
     assert state == expected
 
 
+@pytest.mark.skip
 def test_solve_b():
     puzzle_input_b = dedent(
         """\

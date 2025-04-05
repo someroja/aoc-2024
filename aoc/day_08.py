@@ -5,8 +5,7 @@ Advent of Code 2024, day 8
 from itertools import permutations
 
 import aocd
-
-from aoc_utils import grid, tools
+from utils import grid, tools
 
 
 def solve_a(puzzle_input: str) -> int:

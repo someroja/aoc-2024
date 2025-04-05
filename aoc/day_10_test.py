@@ -2,7 +2,7 @@ import textwrap
 
 import numpy as np
 
-from aoc_2024 import day_10
+from aoc import day_10
 
 puzzle_input = textwrap.dedent(
     """\
